@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Windows.Forms;
 using ImGuiNET;
 using SharpDX;
 using SharpDX.D3DCompiler;
@@ -194,28 +193,29 @@ public sealed class WindowsUiContentDrawer : IUiContentDrawer<Device>
     {
         // Note: this mapping between the windows key enumeration and imgui system-agnostic ImGuiKey might be incomplete.
         var io = ImGui.GetIO();
-        io.KeyMap[(int)ImGuiKey.Tab] = (int)Keys.Tab;
-        io.KeyMap[(int)ImGuiKey.LeftArrow] = (int)Keys.Left;
-        io.KeyMap[(int)ImGuiKey.RightArrow] = (int)Keys.Right;
-        io.KeyMap[(int)ImGuiKey.UpArrow] = (int)Keys.Up;
-        io.KeyMap[(int)ImGuiKey.DownArrow] = (int)Keys.Down;
-        io.KeyMap[(int)ImGuiKey.PageUp] = (int)Keys.PageUp;
-        io.KeyMap[(int)ImGuiKey.PageDown] = (int)Keys.PageDown;
-        io.KeyMap[(int)ImGuiKey.Home] = (int)Keys.Home;
-        io.KeyMap[(int)ImGuiKey.End] = (int)Keys.End;
-        io.KeyMap[(int)ImGuiKey.Delete] = (int)Keys.Delete;
-        io.KeyMap[(int)ImGuiKey.Backspace] = (int)Keys.Back;
-        io.KeyMap[(int)ImGuiKey.Enter] = (int)Keys.Enter;
-        io.KeyMap[(int)ImGuiKey.Escape] = (int)Keys.Escape;
+        // TODO: sdl keymap
+        // io.KeyMap[(int)ImGuiKey.Tab] = (int)Keys.Tab;
+        // io.KeyMap[(int)ImGuiKey.LeftArrow] = (int)Keys.Left;
+        // io.KeyMap[(int)ImGuiKey.RightArrow] = (int)Keys.Right;
+        // io.KeyMap[(int)ImGuiKey.UpArrow] = (int)Keys.Up;
+        // io.KeyMap[(int)ImGuiKey.DownArrow] = (int)Keys.Down;
+        // io.KeyMap[(int)ImGuiKey.PageUp] = (int)Keys.PageUp;
+        // io.KeyMap[(int)ImGuiKey.PageDown] = (int)Keys.PageDown;
+        // io.KeyMap[(int)ImGuiKey.Home] = (int)Keys.Home;
+        // io.KeyMap[(int)ImGuiKey.End] = (int)Keys.End;
+        // io.KeyMap[(int)ImGuiKey.Delete] = (int)Keys.Delete;
+        // io.KeyMap[(int)ImGuiKey.Backspace] = (int)Keys.Back;
+        // io.KeyMap[(int)ImGuiKey.Enter] = (int)Keys.Enter;
+        // io.KeyMap[(int)ImGuiKey.Escape] = (int)Keys.Escape;
         
         // These shortcuts are relevant for imgui's implementation of copy/paste interactions
         // within edit controls.
-        io.KeyMap[(int)ImGuiKey.A] = (int)Keys.A;
-        io.KeyMap[(int)ImGuiKey.C] = (int)Keys.C;
-        io.KeyMap[(int)ImGuiKey.V] = (int)Keys.V;
-        io.KeyMap[(int)ImGuiKey.X] = (int)Keys.X;
-        io.KeyMap[(int)ImGuiKey.Y] = (int)Keys.Y;
-        io.KeyMap[(int)ImGuiKey.Z] = (int)Keys.Z;
+        // io.KeyMap[(int)ImGuiKey.A] = (int)Keys.A;
+        // io.KeyMap[(int)ImGuiKey.C] = (int)Keys.C;
+        // io.KeyMap[(int)ImGuiKey.V] = (int)Keys.V;
+        // io.KeyMap[(int)ImGuiKey.X] = (int)Keys.X;
+        // io.KeyMap[(int)ImGuiKey.Y] = (int)Keys.Y;
+        // io.KeyMap[(int)ImGuiKey.Z] = (int)Keys.Z;
     }
     
     private void PrepareData(ImDrawDataPtr drawData)

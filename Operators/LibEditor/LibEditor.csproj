@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="$(SolutionDir)/Tixl.props" />
   <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>$(TixlNetFrameworkVersion)</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <Configurations>Debug;Release</Configurations>
@@ -18,7 +18,7 @@
     <ProjectReference Include="..\..\Core\Core.csproj" Private="false" PrivateAssets="all" />
     <ProjectReference Include="..\..\Editor\Editor.csproj" Private="false" PrivateAssets="all" />
     <ProjectReference Include="..\..\SystemUi\SystemUi.csproj" />
-    <ProjectReference Include="..\lib\Lib.csproj" Private="false" PrivateAssets="all" />
+    <ProjectReference Include="..\Lib\Lib.csproj" Private="false" PrivateAssets="all" />
     <ProjectReference Include="..\TypeOperators\TypeOperators.csproj" Private="false"
       PrivateAssets="all" />
     <ProjectReference Include="..\..\Logging\Logging.csproj" Private="false" PrivateAssets="all" />

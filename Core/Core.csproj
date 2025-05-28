@@ -2,7 +2,6 @@
     <Import Project="$(SolutionDir)/Tixl.props" />
     <PropertyGroup>
         <TargetFramework>$(TixlNetFrameworkVersion)</TargetFramework>
-        <UseWindowsForms>true</UseWindowsForms>
         <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
         <RootNamespace>T3.Core</RootNamespace>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

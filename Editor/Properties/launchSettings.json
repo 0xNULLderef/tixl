@@ -2,7 +2,10 @@
   "profiles": {
     "t3": {
       "commandName": "Project",
-      "nativeDebugging": false
+      "nativeDebugging": false,
+      "environmentVariables" : {
+        "LD_LIBRARY_PATH": "/home/null/opt/tmp/dxvk-native/package/dxvk-native-master/lib"
+      }
     }
   }
 }

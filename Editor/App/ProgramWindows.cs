@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Windows.Forms;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
@@ -7,6 +6,7 @@ using SharpDX.DXGI;
 using T3.Core.Resource;
 using T3.Core.SystemUi;
 using T3.Editor.Gui;
+using T3.SDL2;
 using T3.Editor.Gui.UiHelpers;
 using T3.Editor.UiModel;
 using Device = SharpDX.Direct3D11.Device;
@@ -30,12 +30,6 @@ internal static class ProgramWindows
         Main.SetBorderStyleSizable();
     }
 
-    internal static void SetInteractionDevices(params object[] objects)
-    {
-        IWindowsFormsMessageHandler[] messageHandlers = objects.OfType<IWindowsFormsMessageHandler>().ToArray();
-        ImGuiDx11RenderForm.InputMethods = messageHandlers;
-    }
-
     public static void SetVertexShader(Resource<VertexShader> resource) => _deviceContext.VertexShader.Set(resource.Value);
     public static void SetPixelShader(Resource<PixelShader> resource) => _deviceContext.PixelShader.Set(resource.Value);
 
@@ -46,7 +40,7 @@ internal static class ProgramWindows
 
         if (UserSettings.Config.FullScreen)
         {
-            var screenCount = Screen.AllScreens.Length;
+            var screenCount = SDL.SDL_GetNumVideoDisplays();
             Main.SetFullScreen(UserSettings.Config.FullScreenIndexMain < screenCount ? UserSettings.Config.FullScreenIndexMain : 0);
             Viewer.SetFullScreen(UserSettings.Config.FullScreenIndexViewer < screenCount ? UserSettings.Config.FullScreenIndexViewer : 0);
         }
@@ -153,7 +147,7 @@ internal static class ProgramWindows
             _factory = swapchain.GetParent<Factory>();
 
             Main.SetDevice(device, _deviceContext, swapchain);
-            Main.InitializeWindow(FormWindowState.Maximized, OnCloseMainWindow, true);
+            Main.InitializeWindow(OnCloseMainWindow, true);
             _factory.MakeWindowAssociation(Main.HwndHandle, WindowAssociationFlags.IgnoreAll);
         }
         catch (Exception e)
@@ -188,7 +182,7 @@ internal static class ProgramWindows
         Viewer.SetSize(width, height);
         Viewer.SetSizeable();
         Viewer.InitViewSwapChain(_factory);
-        Viewer.InitializeWindow(FormWindowState.Normal, null, false);
+        Viewer.InitializeWindow(null, false);
         Viewer.Show();
     }
 

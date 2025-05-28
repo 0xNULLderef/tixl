@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Editor" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
     <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/Editor/Editor.csproj" />
-    <option name="LAUNCH_PROFILE_TFM" value="net9.0-windows" />
+    <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
     <option name="LAUNCH_PROFILE_NAME" value="t3" />
     <option name="USE_EXTERNAL_CONSOLE" value="0" />
     <option name="USE_MONO" value="0" />
@@ -10,6 +10,7 @@
     <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
     <option name="SEND_DEBUG_REQUEST" value="1" />
     <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+    <option name="RUNTIME_TYPE" value="coreclr" />
     <method v="2">
       <option name="Build" default="false" projectName="Player" projectPath="$PROJECT_DIR$/Player/Player.csproj" />
       <option name="Build" default="false" projectName="examples" projectPath="$PROJECT_DIR$/Operators/examples/examples.csproj" />

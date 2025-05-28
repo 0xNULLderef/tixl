@@ -8,7 +8,6 @@ using ImGuiNET;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
 using T3.Editor.App;
-using System.Windows.Forms;
 using T3.Core.Resource;
 using System.Reflection;
 
@@ -192,16 +191,7 @@ internal sealed class AboutDialog : ModalDialog
 
     private static string GetKeyboardLayout()
     {
-        try
-        {
-            var currentInputLanguage = InputLanguage.CurrentInputLanguage;
-
-            return $"{currentInputLanguage.Culture.Name} {currentInputLanguage.LayoutName} ";
-        }
-        catch (Exception)
-        {
-            return "Unknown";
-        }
+        return "Unknown";
     }
 
     private static string GetAppLanguage()

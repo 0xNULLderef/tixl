@@ -1,0 +1,28 @@
+using T3.SystemUi;
+
+namespace T3.SDL2;
+
+public class SDL2 : ICoreSystemUiService
+{
+    public void OpenWithDefaultApplication(string uri)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ExitApplication()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ExitThread()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SetUnhandledExceptionMode(bool throwException)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ICursor Cursor => new CursorWrapper();
+}

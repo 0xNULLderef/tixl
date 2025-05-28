@@ -1,0 +1,20 @@
+using System.Drawing;
+using T3.SystemUi;
+
+namespace T3.SDL2;
+
+public class CursorWrapper : ICursor
+{
+    public Point Position => _position;
+    public MouseButtons ButtonState => _buttonState;
+    public event EventHandler<MouseButtonEventArgs>? ButtonChanged;
+    public event EventHandler<MouseState>? MouseChanged;
+
+    public void SetVisible(bool visible)
+    {
+        throw new NotImplementedException();
+    }
+
+    private Point _position;
+    private MouseButtons _buttonState;
+}

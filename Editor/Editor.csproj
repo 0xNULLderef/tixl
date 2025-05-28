@@ -69,8 +69,8 @@
     <ItemGroup>
         <ProjectReference Include="..\Core\Core.csproj" />
         <ProjectReference Include="..\Logging\Logging.csproj" />
-        <ProjectReference Include="..\MsForms\MsForms.csproj" />
         <ProjectReference Include="..\ProcessRunner\ProcessRunner.csproj" />
+        <ProjectReference Include="..\SDL2\SDL2.csproj" />
         <ProjectReference Include="..\SilkWindows\SilkWindows.csproj" />
     </ItemGroup>
     <!-- ===============================//======================================= -->

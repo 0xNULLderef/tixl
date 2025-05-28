@@ -19,7 +19,7 @@ using T3.Editor.Gui.UiHelpers;
 using T3.Editor.Gui.Windows;
 using T3.Editor.SystemUi;
 using T3.Editor.UiModel.Helpers;
-using T3.MsForms;
+using T3.SDL2;
 using T3.SystemUi;
 
 namespace T3.Editor;
@@ -53,7 +53,7 @@ internal static class Program
         // Not calling this first will cause exceptions...
         Console.WriteLine("Starting T3 Editor");
         Console.WriteLine("Creating EditorUi");
-        EditorUi.Instance = new MsFormsEditor();
+        EditorUi.Instance = new SDL2Editor();
             
         var windowProvider = new SilkWindowProvider();
         var imguiContextLock = windowProvider.ContextLock;
@@ -76,14 +76,7 @@ internal static class Program
         CrashReporting.InitializeCrashReporting();
         #endif
 
-        Console.WriteLine("Creating SplashScreen");
-        ISplashScreen splashScreen = new SplashScreen.SplashScreen();
-
-        var path = Path.Combine(SharedResources.Directory, "images", "editor", "t3-SplashScreen.png");
-        splashScreen.Show(path);
-
         Console.WriteLine("Initializing logging");
-        Log.AddWriter(splashScreen);
         Log.AddWriter(new ConsoleWriter());
         Log.AddWriter(FileWriter.CreateDefault(FileLocations.SettingsPath, out var logPath));
         Log.AddWriter(StatusErrorLine);
@@ -127,11 +120,6 @@ internal static class Program
         UiContentContentDrawer = contentDrawer;
         contentDrawer.Initialize(device, ProgramWindows.Main.Width, ProgramWindows.Main.Height, imguiContextLock, out var context);
 
-        Log.Debug("Initialize Camera Interaction...");
-        var spaceMouse = new SpaceMouse(ProgramWindows.Main.HwndHandle);
-        CameraInteraction.ManipulationDevices = [spaceMouse];
-        ProgramWindows.SetInteractionDevices(spaceMouse);
-
         Log.Debug("Initialize Resource Manager...");
         ResourceManager.Init(device);
         SharedResources.Initialize();
@@ -166,13 +154,8 @@ internal static class Program
         // Setup file watching the operator source
         T3Ui.InitializeEnvironment();
             
-        Log.RemoveWriter(splashScreen);
-            
         if(UserSettings.Config.KeepTraceForLogMessages)
             Log.AddWriter(new Profiling.ProfilingLogWriterClass());
-            
-        splashScreen.Close();
-        splashScreen.Dispose();
 
         // Initialize optional Viewer Windows
         ProgramWindows.InitializeSecondaryViewerWindow("TiXL Viewer", 640, 360);

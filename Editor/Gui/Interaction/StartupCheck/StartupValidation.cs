@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text;
 using T3.Core.SystemUi;
 using T3.Editor.Gui.Windows.Layouts;
@@ -37,6 +37,7 @@ public static class StartupValidation
                                                                  LayoutHandling.LayoutFolder + "layout1.json",
                                                                  @"Editor\bin\Release\net9.0-windows\bass.dll",
                                                                  @"Editor\bin\Debug\net8.0-windows\bass.dll",
+                                                                 @"Editor\bin\Release\net9.0\libbass.so",
                                                              },
                                      Message = "Please run Install/install.bat.",
                                      URL = "https://github.com/tixl3d/tixl/wiki/installation#setup-and-installation",
@@ -120,23 +121,23 @@ public static class StartupValidation
     public static void ValidateNotRunningFromSystemFolder()
     {
         var currentDir = Directory.GetCurrentDirectory();
-        var specialFolders = new[]
-                                 {
-                                     Environment.SpecialFolder.ProgramFilesX86,
-                                     Environment.SpecialFolder.ProgramFiles,
-                                     Environment.SpecialFolder.System,
-                                     Environment.SpecialFolder.Windows,
-                                 };
-            
-        foreach (var p in specialFolders)
-        {
-            var folderPath = Environment.GetFolderPath(p);
-            if (currentDir.IndexOf(folderPath, StringComparison.OrdinalIgnoreCase) < 0)
-                continue;
+        // var specialFolders = new[]
+        //                          {
+        //                              Environment.SpecialFolder.ProgramFilesX86,
+        //                              Environment.SpecialFolder.ProgramFiles,
+        //                              Environment.SpecialFolder.System,
+        //                              Environment.SpecialFolder.Windows,
+        //                          };
 
-            BlockingWindow.Instance.ShowMessageBox($"Tooll can't be started from {folderPath}", @"Error", "Ok");
-            EditorUi.Instance.ExitApplication();
-        }
+        // foreach (var p in specialFolders)
+        // {
+        //     var folderPath = Environment.GetFolderPath(p);
+        //     if (currentDir.IndexOf(folderPath, StringComparison.OrdinalIgnoreCase) < 0)
+        //         continue;
+
+        //     BlockingWindow.Instance.ShowMessageBox($"Tooll can't be started from {folderPath}", @"Error", "Ok");
+        //     EditorUi.Instance.ExitApplication();
+        // }
             
         // Not writeable
         var directoryInfo = new DirectoryInfo(currentDir);

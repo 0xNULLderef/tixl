@@ -1,7 +1,6 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
@@ -11,6 +10,7 @@ using T3.Core.DataTypes.Vector;
 using T3.Core.Resource;
 using T3.Core.SystemUi;
 using T3.Editor.Gui.Styling;
+using T3.SDL2;
 using Device = SharpDX.Direct3D11.Device;
 using Icon = System.Drawing.Icon;
 using Rectangle = System.Drawing.Rectangle;
@@ -24,15 +24,30 @@ namespace T3.Editor.App;
 /// </summary>
 internal sealed class AppWindow
 {
-    public IntPtr HwndHandle => Form.Handle;
+    public IntPtr HwndHandle => SDLWindow;
     public Int2 Size => new(Width, Height);
-    public int Width => Form.ClientSize.Width;
-    public int Height => Form.ClientSize.Height;
-    public bool IsFullScreen => Form.FormBorderStyle == FormBorderStyle.None;
+
+    public int Width {
+        get {
+            int width, height;
+            SDL.SDL_GetWindowSize(SDLWindow, out width, out height);
+            return width;
+        }
+    }
+
+    public int Height {
+        get {
+            int width, height;
+            SDL.SDL_GetWindowSize(SDLWindow, out width, out height);
+            return height;
+        }
+    }
+
+    public bool IsFullScreen => (SDL.SDL_GetWindowFlags(SDLWindow) & (uint)SDL.SDL_WindowFlags.SDL_WINDOW_FULLSCREEN) != 0;
 
     internal SwapChain SwapChain { get => _swapChain; private set => _swapChain = value; }
     internal RenderTargetView RenderTargetView { get => _renderTargetView; private set => _renderTargetView = value; }
-    internal ImGuiDx11RenderForm Form { get; private set; }
+    internal nint SDLWindow { get; private set; }
 
     internal SwapChainDescription SwapChainDescription => new()
                                                               {
@@ -42,51 +57,57 @@ internal sealed class AppWindow
                                                                                                         new Rational(60, 1),
                                                                                                         Format.R8G8B8A8_UNorm),
                                                                   IsWindowed = true,
-                                                                  OutputHandle = Form.Handle,
+                                                                  OutputHandle = SDLWindow,
                                                                   SampleDescription = new SampleDescription(1, 0),
                                                                   SwapEffect = SwapEffect.Discard,
                                                                   Usage = Usage.RenderTargetOutput
                                                               };
 
-    internal bool IsMinimized => Form.WindowState == FormWindowState.Minimized;
-    internal bool IsCursorOverWindow => Form.Bounds.Contains(CoreUi.Instance.Cursor.Position);
+    internal bool IsMinimized => (SDL.SDL_GetWindowFlags(SDLWindow) & (uint)SDL.SDL_WindowFlags.SDL_WINDOW_MINIMIZED) != 0;
+    internal bool IsCursorOverWindow => (SDL.SDL_GetWindowFlags(SDLWindow) & (uint)SDL.SDL_WindowFlags.SDL_WINDOW_MOUSE_FOCUS) != 0;
     public Texture2D Texture { get; set; }
 
     internal AppWindow(string windowTitle, bool disableClose)
     {
-        CreateRenderForm(windowTitle, disableClose);
+        CreateWindow(windowTitle, disableClose);
     }
 
     public void SetVisible(bool isVisible)
     {
-        Form.Visible = isVisible;
+        // TODO: uuhh how to sdl this?
     }
 
     public void SetSizeable()
     {
-        Form.FormBorderStyle = FormBorderStyle.Sizable;
+        SDL.SDL_SetWindowResizable(SDLWindow, SDL.SDL_bool.SDL_TRUE);
         if (_boundsBeforeFullscreen.Height != 0 && _boundsBeforeFullscreen.Width != 0)
         {
-            Form.Bounds = _boundsBeforeFullscreen;
+            SDL.SDL_SetWindowSize(SDLWindow, _boundsBeforeFullscreen.Width, _boundsBeforeFullscreen.Height);
+            SDL.SDL_SetWindowPosition(SDLWindow, _boundsBeforeFullscreen.X, _boundsBeforeFullscreen.Y);
         }
     }
 
-    public void Show() => Form.Show();
+    public void Show() => SDL.SDL_ShowWindow(SDLWindow);
 
     public Vector2 GetDpi()
     {
-        using Graphics graphics = Form.CreateGraphics();
-        Vector2 dpi = new(graphics.DpiX, graphics.DpiY);
+        float ddpi, hdpi, vdpi;
+        // TODO: which display?
+        SDL.SDL_GetDisplayDPI(0, out ddpi, out hdpi, out vdpi);
+        Vector2 dpi = new(hdpi, vdpi);
         return dpi;
     }
 
     internal void SetFullScreen(int screenIndex)
     {
-        _boundsBeforeFullscreen = Form.Bounds;
-        Form.FormBorderStyle = FormBorderStyle.Sizable;
-        Form.WindowState = FormWindowState.Normal;
-        Form.FormBorderStyle = FormBorderStyle.None;
-        Form.Bounds = Screen.AllScreens[screenIndex].Bounds;
+        int x, y, width, height;
+        SDL.SDL_GetWindowPosition(SDLWindow, out x, out y);
+        SDL.SDL_GetWindowSize(SDLWindow, out width, out height);
+        _boundsBeforeFullscreen.X = x;
+        _boundsBeforeFullscreen.Y = y;
+        _boundsBeforeFullscreen.Width = width;
+        _boundsBeforeFullscreen.Height = height;
+        SDL.SDL_SetWindowFullscreen(SDLWindow, (uint)SDL.SDL_WindowFlags.SDL_WINDOW_FULLSCREEN);
     }
 
     internal void InitViewSwapChain(Factory factory)
@@ -107,27 +128,46 @@ internal sealed class AppWindow
         _deviceContext.ClearRenderTargetView(RenderTargetView, sharpDxColor);
     }
 
-    internal void RunRenderLoop(Action callback) => RenderLoop.Run(Form, () => callback());
+    internal void RunRenderLoop(Action callback)
+    {
+        bool running = true;
+        while (running)
+        {
+            while (SDL.SDL_PollEvent(out SDL.SDL_Event e) == 1)
+            {
+                switch (e.type)
+                {
+                case SDL.SDL_EventType.SDL_QUIT:
+                    running = false;
+                    break;
+                default:
+                    break;
+                }
+            }
 
-    internal void SetSize(int width, int height) => Form.ClientSize = new Size(width, height);
+            callback();
+        }
+    }
 
-    internal void SetBorderStyleSizable() => Form.FormBorderStyle = FormBorderStyle.Sizable;
+    internal void SetSize(int width, int height) => SDL.SDL_SetWindowSize(SDLWindow, width, height);
 
-    internal void InitializeWindow(FormWindowState windowState, CancelEventHandler handleClose, bool handleKeys)
+    internal void SetBorderStyleSizable() => SDL.SDL_SetWindowResizable(SDLWindow, SDL.SDL_bool.SDL_TRUE);
+
+    internal void InitializeWindow(CancelEventHandler handleClose, bool handleKeys)
     {
         InitRenderTargetsAndEventHandlers();
 
-        if (handleKeys)
-        {
-            MsForms.MsForms.TrackKeysOf(Form);
-        }
-            
-        MsForms.MsForms.TrackMouseOf(Form);
+        // if (handleKeys)
+        // {
+        //     MsForms.MsForms.TrackKeysOf(Form);
+        // }
+        //     
+        // MsForms.MsForms.TrackMouseOf(Form);
 
-        if (handleClose != null)
-            Form.Closing += handleClose;
+        // if (handleClose != null)
+        //     Form.Closing += handleClose;
 
-        Form.WindowState = windowState;
+        // Form.WindowState = windowState;
     }
 
     internal void SetDevice(Device device, DeviceContext deviceContext, SwapChain swapChain = null)
@@ -148,21 +188,10 @@ internal sealed class AppWindow
         _swapChain.Dispose();
     }
 
-    private void CreateRenderForm(string windowTitle, bool disableClose)
+    private void CreateWindow(string windowTitle, bool disableClose)
     {
-        var fileName = Path.Combine(SharedResources.Directory, @"images/editor/t3.ico");
-        Form = disableClose
-                   ? new NoCloseRenderForm(windowTitle)
-                         {
-                             ClientSize = new Size(640, 360 + 20),
-                             Icon = new Icon(fileName, 48, 48),
-                             FormBorderStyle = FormBorderStyle.None,
-                         }
-                   : new ImGuiDx11RenderForm(windowTitle)
-                         {
-                             ClientSize = new Size(640, 480),
-                             Icon = new Icon(fileName, 48, 48)
-                         };
+        SDLWindow = SDL.SDL_CreateWindow(windowTitle, SDL.SDL_WINDOWPOS_UNDEFINED, SDL.SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL.SDL_WindowFlags.SDL_WINDOW_VULKAN);
+        // TODO: SDL.SDL_AddEventWatch();
     }
 
     private void InitRenderTargetsAndEventHandlers()
@@ -171,51 +200,30 @@ internal sealed class AppWindow
         _backBufferTexture = Resource.FromSwapChain<Texture2D>(SwapChain, 0);
         RenderTargetView = new RenderTargetView(device, _backBufferTexture);
 
-        Form.ResizeBegin += (sender, args) => _isResizingRightNow = true;
-        Form.ResizeEnd += (sender, args) =>
-                          {
-                              RebuildBackBuffer(Form, device, ref _renderTargetView, ref _backBufferTexture, ref _swapChain);
-                              _isResizingRightNow = false;
-                          };
-        Form.ClientSizeChanged += (sender, args) =>
-                                  {
-                                      if (_isResizingRightNow)
-                                          return;
+        // Form.ResizeBegin += (sender, args) => _isResizingRightNow = true;
+        // Form.ResizeEnd += (sender, args) =>
+        //                   {
+        //                       RebuildBackBuffer(SDLWindow, device, ref _renderTargetView, ref _backBufferTexture, ref _swapChain);
+        //                       _isResizingRightNow = false;
+        //                   };
+        // Form.ClientSizeChanged += (sender, args) =>
+        //                           {
+        //                               if (_isResizingRightNow)
+        //                                   return;
 
-                                      RebuildBackBuffer(Form, device, ref _renderTargetView, ref _backBufferTexture, ref _swapChain);
-                                  };
+        //                               RebuildBackBuffer(SDLWindow, device, ref _renderTargetView, ref _backBufferTexture, ref _swapChain);
+        //                           };
     }
 
-    private static void RebuildBackBuffer(Form form, Device device, ref RenderTargetView rtv, ref Texture2D buffer, ref SwapChain swapChain)
+    private static void RebuildBackBuffer(nint window, Device device, ref RenderTargetView rtv, ref Texture2D buffer, ref SwapChain swapChain)
     {
         rtv.Dispose();
         buffer.Dispose();
-        swapChain.ResizeBuffers(3, form.ClientSize.Width, form.ClientSize.Height, Format.Unknown, 0);
+        int width, height;
+        SDL.SDL_GetWindowSize(window, out width, out height);
+        swapChain.ResizeBuffers(3, width, height, Format.Unknown, 0);
         buffer = Resource.FromSwapChain<Texture2D>(swapChain, 0);
         rtv = new RenderTargetView(device, buffer);
-    }
-
-    /// <summary>
-    /// We prevent closing the secondary viewer window for now because
-    /// this will cause a SwapChain related crash
-    /// </summary>
-    private sealed class NoCloseRenderForm : ImGuiDx11RenderForm
-    {
-        private const int CpNocloseButton = 0x200;
-
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                CreateParams myCp = base.CreateParams;
-                myCp.ClassStyle = myCp.ClassStyle | CpNocloseButton;
-                return myCp;
-            }
-        }
-
-        public NoCloseRenderForm(string title) : base(title)
-        {
-        }
     }
 
     private bool _hasSetDevice;
