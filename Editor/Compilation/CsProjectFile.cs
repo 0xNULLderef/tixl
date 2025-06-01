@@ -165,7 +165,7 @@ internal sealed class CsProjectFile
     /// </summary>
     public string GetBuildTargetDirectory()
     {
-        return Path.Combine(GetRootDirectory(EditorBuildMode), VersionSubfolder, TargetFramework);
+        return Path.Combine(GetRootDirectory(EditorBuildMode), TargetFramework);
     }
     
     /// <summary>

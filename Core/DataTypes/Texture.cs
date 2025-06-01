@@ -7,6 +7,7 @@ using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.WIC;
+using StbImageSharp;
 using T3.Core.Logging;
 using T3.Core.Resource;
 using T3.Core.Resource.Dds;
@@ -32,6 +33,41 @@ public sealed class Texture2D(SharpDX.Direct3D11.Texture2D texture) : Texture<Sh
                           {
                               Width = bitmapSource.Size.Width,
                               Height = bitmapSource.Size.Height,
+                              ArraySize = 1,
+                              BindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget,
+                              Usage = ResourceUsage.Default,
+                              CpuAccessFlags = CpuAccessFlags.None,
+                              Format = Format.R8G8B8A8_UNorm,
+                              MipLevels = mipLevels,
+                              OptionFlags = ResourceOptionFlags.GenerateMipMaps,
+                              SampleDescription = new SampleDescription(1, 0),
+                          };
+        
+        var dataRectangles = new DataRectangle[mipLevels];
+        for (var i = 0; i < mipLevels; i++)
+        {
+            dataRectangles[i] = new DataRectangle(buffer.DataPointer, stride);
+            stride /= 2;
+        }
+
+        var dxTexture = new SharpDX.Direct3D11.Texture2D(device, texDesc, dataRectangles);
+        return new Texture2D(dxTexture);
+    }
+    
+    public static Texture2D CreateFromRgbaPixels(Device device, int width, int height, byte[] pixels)
+    {
+        // Allocate DataStream to receive the WIC image pixels
+        var stride = width * 4;
+        using var buffer = new DataStream(height * stride, true, true);
+        buffer.Write(pixels, 0, height * stride);
+
+        // Copy the content of the WIC to the buffer
+        // bitmapSource.CopyPixels(stride, buffer);
+        int mipLevels = (int)Math.Log(width, 2.0) + 1;
+        var texDesc = new Texture2DDescription
+                          {
+                              Width = width,
+                              Height = height,
                               ArraySize = 1,
                               BindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget,
                               Usage = ResourceUsage.Default,
@@ -97,14 +133,15 @@ public sealed class Texture2D(SharpDX.Direct3D11.Texture2D texture) : Texture<Sh
     {
         try
         {
-            using var factory = new ImagingFactory();
-            using var bitmapDecoder = new BitmapDecoder(factory, stream, DecodeOptions.CacheOnDemand);
-            using var formatConverter = new FormatConverter(factory);
-            using var bitmapFrameDecode = bitmapDecoder.GetFrame(0);
-            formatConverter.Initialize(bitmapFrameDecode, PixelFormat.Format32bppRGBA, BitmapDitherType.None, null, 0.0, BitmapPaletteType.Custom);
+            var image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
+            // using var factory = new ImagingFactory();
+            // using var bitmapDecoder = new BitmapDecoder(factory, stream, DecodeOptions.CacheOnDemand);
+            // using var formatConverter = new FormatConverter(factory);
+            // using var bitmapFrameDecode = bitmapDecoder.GetFrame(0);
+            // formatConverter.Initialize(bitmapFrameDecode, PixelFormat.Format32bppRGBA, BitmapDitherType.None, null, 0.0, BitmapPaletteType.Custom);
 
             
-            texture = CreateFromBitmap(ResourceManager.Device, formatConverter);
+            texture = CreateFromRgbaPixels(ResourceManager.Device, image.Width, image.Height, image.Data);
             failureReason = null;
             return true;
         }

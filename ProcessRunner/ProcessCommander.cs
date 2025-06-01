@@ -35,7 +35,7 @@ public sealed class ProcessCommander<T>(string workingDirectory, string logPrefi
             return false;
         }
 
-        if (!TryCreatePowershellProcess(out _process))
+        if (!TryCreateShellProcess(out _process))
         {
             isRunning = false;
             return false;
@@ -58,13 +58,12 @@ public sealed class ProcessCommander<T>(string workingDirectory, string logPrefi
         return true;
     }
 
-    private bool TryCreatePowershellProcess([NotNullWhen(true)] out Process? process)
+    private bool TryCreateShellProcess([NotNullWhen(true)] out Process? process)
     {
         // prefer cross-platform modern powershell
-        process = CreateProcess("pwsh", _workingDirectory);
+        process = CreateProcess("sh", _workingDirectory);
         
-        const string crossPlatformFailureMessage = "Failed to start cross-platform powershell";
-        const string legacyFailureMessage = "Failed to start legacy powershell";
+        const string crossPlatformFailureMessage = "Failed to start shell";
         try
         {
             if (!process.Start())
@@ -74,34 +73,13 @@ public sealed class ProcessCommander<T>(string workingDirectory, string logPrefi
             }
             else
             {
-                T3.Core.Logging.Log.Debug("Started cross-platform powershell");
+                T3.Core.Logging.Log.Debug("Started shell");
                 return true;
             }
         }
         catch (Exception e)
         {
             T3.Core.Logging.Log.Debug($"{crossPlatformFailureMessage}: {e.Message}");
-        }
-        
-        // fallback to legacy powershell
-        process = CreateProcess("powershell", _workingDirectory);
-        try
-        {
-            if (!process.Start())
-            {
-                Close(process, 0f);
-                process = null;
-                T3.Core.Logging.Log.Error(legacyFailureMessage);
-                return false;
-            }
-            
-            T3.Core.Logging.Log.Debug("Started legacy powershell");
-        }
-        catch (Exception e)
-        {
-            T3.Core.Logging.Log.Error($"{legacyFailureMessage}: {e.Message}");
-            process = null;
-            return false;
         }
 
         return true;

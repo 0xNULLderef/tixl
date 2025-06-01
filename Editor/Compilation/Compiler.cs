@@ -44,7 +44,7 @@ internal static class Compiler
         var restoreArg = compilationOptions.RestoreNuGet ? "" : "--no-restore";
         
         // construct command
-        const string fmt = "$env:DOTNET_CLI_UI_LANGUAGE=\"en\"; dotnet build '{0}' --nologo --configuration {1} --verbosity {2} --output '{3}' {4} --no-self-contained -property:PreferredUILang=en-US";
+        const string fmt = "DOTNET_CLI_UI_LANGUAGE=\"en\" dotnet build '{0}' --nologo --configuration {1} --verbosity {2} --output '{3}' {4} --no-self-contained -property:PreferredUILang=en-US";
         return string.Format(fmt, projectFile.FullPath, buildModeName, _verbosityArgs[compilationOptions.Verbosity], targetDirectory, restoreArg);
     }
 
@@ -110,7 +110,7 @@ internal static class Compiler
             _processCommander = new ProcessCommander<CompilationOptions>(_workingDirectory, "Compilation: ");
             //Log.Debug("Compilation process started");
         }
-            
+        
         if (!_processCommander.TryBeginProcess(out var isRunning) && !isRunning)
         {
             Log.Error("Failed to start compilation process");

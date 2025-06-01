@@ -4,7 +4,7 @@
       "commandName": "Project",
       "nativeDebugging": false,
       "environmentVariables" : {
-        "LD_LIBRARY_PATH": "/home/null/opt/tmp/dxvk-native/package/dxvk-native-master/lib"
+        "LD_LIBRARY_PATH": "/home/null/opt/tmp/dxvk-native/package/dxvk-native-master/lib;/home/null/opt/src/dllmap/build"
       }
     }
   }

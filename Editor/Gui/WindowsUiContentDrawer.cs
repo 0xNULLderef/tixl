@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using ImGuiNET;
@@ -8,6 +9,7 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
 using SharpDX.WIC;
+using StbImageSharp;
 using T3.Core.Operator.Slots;
 using T3.Core.Resource;
 using T3.Core.SystemUi;
@@ -582,34 +584,31 @@ public sealed class WindowsUiContentDrawer : IUiContentDrawer<Device>
             io.Fonts.GetTexDataAsRGBA32(out IntPtr atlasPixels, out var atlasWidth, out var atlasHeight, out _);
             
             // Load the source image
-            ImagingFactory factory = new ImagingFactory();
-            var bitmapDecoder = new BitmapDecoder(factory, Icons.IconAtlasPath, DecodeOptions.CacheOnDemand);
-            var formatConverter = new FormatConverter(factory);
-            var bitmapFrameDecode = bitmapDecoder.GetFrame(0);
-            formatConverter.Initialize(bitmapFrameDecode, PixelFormat.Format32bppRGBA, BitmapDitherType.None, null, 0.0, BitmapPaletteType.Custom);
-            
+            using var stream = File.OpenRead(Icons.IconAtlasPath);
+            var image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
+            var pixels = new uint[image.Width * image.Height];
+            System.Buffer.BlockCopy(image.Data, 0, pixels, 0, image.Width * image.Height * 4);
+
             // Copy the data into the font atlas texture
             for (int i = 0; i < glyphIds.Length; i++)
             {
                 var glyphId = glyphIds[i];
                 var icon = Icons.CustomIcons[i];
-                
-                int sx = (int)icon.SourceArea.GetWidth();
-                int sy = (int)icon.SourceArea.GetHeight();
+
                 int px = (int)icon.SourceArea.Min.X;
                 int py = (int)icon.SourceArea.Min.Y;
+                int sx = (int)icon.SourceArea.GetWidth();
                 
-                uint[] iconContent = new uint[sx * sy];
-                formatConverter.CopyPixels(new RawBox(px, py, sx, sy), iconContent);
+                // uint[] iconContent = new uint[sx * sy];
+                // formatConverter.CopyPixels(new RawBox(px, py, sx, sy), iconContent);
                 
                 var rect = io.Fonts.GetCustomRectByIndex(glyphId);
-                for (int y = 0, s = 0; y < rect.Height; y++)
+                for (int y = 0; y < rect.Height; y++)
                 {
                     uint* p = (uint*)atlasPixels + (rect.Y + y) * atlasWidth + rect.X;
                     for (int x = rect.Width; x > 0; x--)
                     {
-                        *p++ = iconContent[s];
-                        s++;
+                        *p++ = pixels[image.Width * (py + y) + px + (sx - x)];
                     }
                 }
             }

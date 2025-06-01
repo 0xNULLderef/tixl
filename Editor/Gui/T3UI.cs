@@ -51,7 +51,7 @@ public static class T3Ui
             return;
 
 
-        CompatibleMidiDeviceHandling.InitializeConnectedDevices();
+        // CompatibleMidiDeviceHandling.InitializeConnectedDevices();
         _initialed = true;
     }
 
@@ -348,8 +348,8 @@ public static class T3Ui
     internal static float DisplayScaleFactor { get; set; } = 1;
     internal static bool IsAnyPopupOpen => !string.IsNullOrEmpty(FrameStats.Last.OpenedPopUpName);
 
-    internal static readonly MidiDataRecording MidiDataRecording = new(DataRecording.ActiveRecordingSet);
-    internal static readonly OscDataRecording OscDataRecording = new(DataRecording.ActiveRecordingSet);
+    // internal static readonly MidiDataRecording MidiDataRecording = new(DataRecording.ActiveRecordingSet);
+    // internal static readonly OscDataRecording OscDataRecording = new(DataRecording.ActiveRecordingSet);
 
     //private static readonly AutoBackup.AutoBackup _autoBackup = new();
 

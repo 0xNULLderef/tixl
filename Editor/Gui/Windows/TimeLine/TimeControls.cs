@@ -279,8 +279,9 @@ internal static class TimeControls
 
         // MidiIndicator
         {
-            var timeSinceLastEvent = Playback.RunTimeInSecs - Math.Max(T3Ui.MidiDataRecording.LastEventTime, T3Ui.OscDataRecording.LastEventTime);
-            var flashFactor = MathF.Pow((float)timeSinceLastEvent.Clamp(0, 1) / 1, 0.5f);
+            /*var timeSinceLastEvent = Playback.RunTimeInSecs - T3Ui.OscDataRecording.LastEventTime;
+            var flashFactor = MathF.Pow((float)timeSinceLastEvent.Clamp(0, 1) / 1, 0.5f);*/
+            float flashFactor = 0.0f;
             var color = Color.Mix(UiColors.StatusAnimated, UiColors.BackgroundFull.Fade(0.3f), flashFactor);
             ImGui.PushStyleColor(ImGuiCol.Text, color.Rgba);
             if (CustomComponents.IconButton(Icon.IO, ControlSize))
@@ -295,7 +296,7 @@ internal static class TimeControls
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                if (timeSinceLastEvent < 10)
+                /*if (timeSinceLastEvent < 10)
                 {
                     ImGui.BeginChild("canvas", new Vector2(400, 250));
 
@@ -303,7 +304,7 @@ internal static class TimeControls
                     _dataSetView.Draw(DataRecording.ActiveRecordingSet);
                     ImGui.EndChild();
                 }
-                else
+                else*/
                 {
                     ImGui.Text("Midi and OSC input indicator\nClick to open IO window.");
                 }
