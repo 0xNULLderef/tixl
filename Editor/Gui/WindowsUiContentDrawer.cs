@@ -19,6 +19,7 @@ using T3.Editor.Gui.UiHelpers;
 using T3.Editor.Gui.Windows;
 using T3.Editor.SystemUi;
 using T3.Editor.UiModel;
+using T3.SDL2;
 using T3.SystemUi;
 using Buffer = SharpDX.Direct3D11.Buffer;
 using Device = SharpDX.Direct3D11.Device;
@@ -196,28 +197,28 @@ public sealed class WindowsUiContentDrawer : IUiContentDrawer<Device>
         // Note: this mapping between the windows key enumeration and imgui system-agnostic ImGuiKey might be incomplete.
         var io = ImGui.GetIO();
         // TODO: sdl keymap
-        // io.KeyMap[(int)ImGuiKey.Tab] = (int)Keys.Tab;
-        // io.KeyMap[(int)ImGuiKey.LeftArrow] = (int)Keys.Left;
-        // io.KeyMap[(int)ImGuiKey.RightArrow] = (int)Keys.Right;
-        // io.KeyMap[(int)ImGuiKey.UpArrow] = (int)Keys.Up;
-        // io.KeyMap[(int)ImGuiKey.DownArrow] = (int)Keys.Down;
-        // io.KeyMap[(int)ImGuiKey.PageUp] = (int)Keys.PageUp;
-        // io.KeyMap[(int)ImGuiKey.PageDown] = (int)Keys.PageDown;
-        // io.KeyMap[(int)ImGuiKey.Home] = (int)Keys.Home;
-        // io.KeyMap[(int)ImGuiKey.End] = (int)Keys.End;
-        // io.KeyMap[(int)ImGuiKey.Delete] = (int)Keys.Delete;
-        // io.KeyMap[(int)ImGuiKey.Backspace] = (int)Keys.Back;
-        // io.KeyMap[(int)ImGuiKey.Enter] = (int)Keys.Enter;
-        // io.KeyMap[(int)ImGuiKey.Escape] = (int)Keys.Escape;
+        io.KeyMap[(int)ImGuiKey.Tab] = (int)SDL.SDL_Scancode.SDL_SCANCODE_TAB;
+        io.KeyMap[(int)ImGuiKey.LeftArrow] = (int)SDL.SDL_Scancode.SDL_SCANCODE_LEFT;
+        io.KeyMap[(int)ImGuiKey.RightArrow] = (int)SDL.SDL_Scancode.SDL_SCANCODE_RIGHT;
+        io.KeyMap[(int)ImGuiKey.UpArrow] = (int)SDL.SDL_Scancode.SDL_SCANCODE_UP;
+        io.KeyMap[(int)ImGuiKey.DownArrow] = (int)SDL.SDL_Scancode.SDL_SCANCODE_DOWN;
+        io.KeyMap[(int)ImGuiKey.PageUp] = (int)SDL.SDL_Scancode.SDL_SCANCODE_PAGEUP;
+        io.KeyMap[(int)ImGuiKey.PageDown] = (int)SDL.SDL_Scancode.SDL_SCANCODE_PAGEDOWN;
+        io.KeyMap[(int)ImGuiKey.Home] = (int)SDL.SDL_Scancode.SDL_SCANCODE_HOME;
+        io.KeyMap[(int)ImGuiKey.End] = (int)SDL.SDL_Scancode.SDL_SCANCODE_END;
+        io.KeyMap[(int)ImGuiKey.Delete] = (int)SDL.SDL_Scancode.SDL_SCANCODE_DELETE;
+        io.KeyMap[(int)ImGuiKey.Backspace] = (int)SDL.SDL_Scancode.SDL_SCANCODE_BACKSPACE;
+        io.KeyMap[(int)ImGuiKey.Enter] = (int)SDL.SDL_Scancode.SDL_SCANCODE_RETURN;
+        io.KeyMap[(int)ImGuiKey.Escape] = (int)SDL.SDL_Scancode.SDL_SCANCODE_ESCAPE;
         
         // These shortcuts are relevant for imgui's implementation of copy/paste interactions
         // within edit controls.
-        // io.KeyMap[(int)ImGuiKey.A] = (int)Keys.A;
-        // io.KeyMap[(int)ImGuiKey.C] = (int)Keys.C;
-        // io.KeyMap[(int)ImGuiKey.V] = (int)Keys.V;
-        // io.KeyMap[(int)ImGuiKey.X] = (int)Keys.X;
-        // io.KeyMap[(int)ImGuiKey.Y] = (int)Keys.Y;
-        // io.KeyMap[(int)ImGuiKey.Z] = (int)Keys.Z;
+        io.KeyMap[(int)ImGuiKey.A] = (int)SDL.SDL_Scancode.SDL_SCANCODE_A;
+        io.KeyMap[(int)ImGuiKey.C] = (int)SDL.SDL_Scancode.SDL_SCANCODE_C;
+        io.KeyMap[(int)ImGuiKey.V] = (int)SDL.SDL_Scancode.SDL_SCANCODE_V;
+        io.KeyMap[(int)ImGuiKey.X] = (int)SDL.SDL_Scancode.SDL_SCANCODE_X;
+        io.KeyMap[(int)ImGuiKey.Y] = (int)SDL.SDL_Scancode.SDL_SCANCODE_Y;
+        io.KeyMap[(int)ImGuiKey.Z] = (int)SDL.SDL_Scancode.SDL_SCANCODE_Z;
     }
     
     private void PrepareData(ImDrawDataPtr drawData)

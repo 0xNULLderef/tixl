@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using ImGuiNET;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
@@ -133,6 +134,7 @@ internal sealed class AppWindow
         bool running = true;
         while (running)
         {
+            var io = ImGui.GetIO();
             while (SDL.SDL_PollEvent(out SDL.SDL_Event e) == 1)
             {
                 switch (e.type)
@@ -140,7 +142,27 @@ internal sealed class AppWindow
                 case SDL.SDL_EventType.SDL_QUIT:
                     running = false;
                     break;
-                default:
+                case SDL.SDL_EventType.SDL_MOUSEMOTION:
+                case SDL.SDL_EventType.SDL_MOUSEBUTTONDOWN:
+                case SDL.SDL_EventType.SDL_MOUSEBUTTONUP:
+                    int x, y;
+                    uint buttons = SDL.SDL_GetMouseState(out x, out y);
+                    io.MousePos = new Vector2(x, y);
+                    io.MouseDown[0] = (buttons & SDL.SDL_BUTTON_LMASK) != 0;
+                    io.MouseDown[1] = (buttons & SDL.SDL_BUTTON_RMASK) != 0;
+                    io.MouseDown[2] = (buttons & SDL.SDL_BUTTON_MMASK) != 0;
+                    break;
+                case SDL.SDL_EventType.SDL_KEYDOWN:
+                    io.KeyCtrl = (e.key.keysym.mod & SDL.SDL_Keymod.KMOD_CTRL) != 0;
+                    io.KeyShift = (e.key.keysym.mod & SDL.SDL_Keymod.KMOD_SHIFT) != 0;
+                    io.KeyAlt = (e.key.keysym.mod & SDL.SDL_Keymod.KMOD_ALT) != 0;
+                    io.KeysDown[(int)e.key.keysym.scancode] = true;
+                    break;
+                case SDL.SDL_EventType.SDL_KEYUP:
+                    io.KeyCtrl = (e.key.keysym.mod & SDL.SDL_Keymod.KMOD_CTRL) != 0;
+                    io.KeyShift = (e.key.keysym.mod & SDL.SDL_Keymod.KMOD_SHIFT) != 0;
+                    io.KeyAlt = (e.key.keysym.mod & SDL.SDL_Keymod.KMOD_ALT) != 0;
+                    io.KeysDown[(int)e.key.keysym.scancode] = false;
                     break;
                 }
             }
@@ -190,7 +212,7 @@ internal sealed class AppWindow
 
     private void CreateWindow(string windowTitle, bool disableClose)
     {
-        SDLWindow = SDL.SDL_CreateWindow(windowTitle, SDL.SDL_WINDOWPOS_UNDEFINED, SDL.SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL.SDL_WindowFlags.SDL_WINDOW_VULKAN);
+        SDLWindow = SDL.SDL_CreateWindow(windowTitle, SDL.SDL_WINDOWPOS_UNDEFINED, SDL.SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL.SDL_WindowFlags.SDL_WINDOW_VULKAN);
         // TODO: SDL.SDL_AddEventWatch();
     }
 

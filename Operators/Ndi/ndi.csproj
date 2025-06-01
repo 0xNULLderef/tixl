@@ -9,7 +9,7 @@
     <AssemblyName>$(RootNamespace)</AssemblyName>
     <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU</Platforms>
-    <VersionPrefix>1.0.39</VersionPrefix>
+    <VersionPrefix>1.0.57</VersionPrefix>
     <HomeGuid>00000000-0000-0000-0000-000000000000</HomeGuid>
     <EditorVersion>4.0.2</EditorVersion>
     <IsEditorOnly>false</IsEditorOnly>

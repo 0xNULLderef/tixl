@@ -16,13 +16,11 @@ public sealed class SelectionFence
     {
         if (_state is States.CompletedAsArea or States.CompletedAsClick)
             _state = States.Inactive;
-            
-        var globalMouse = EditorUi.Instance.Cursor;
-
+        
         var io = ImGui.GetIO();
         var imguiMousePos = io.MousePos;
         selectMode = GetSelectMode(io);
-        var isLeftButtonDown = globalMouse.IsButtonDown(MouseButtons.Left);
+        var isLeftButtonDown = io.MouseDown[0];
             
         const ImGuiHoveredFlags hoverRules = ImGuiHoveredFlags.AllowWhenBlockedByPopup | ImGuiHoveredFlags.ChildWindows;
             
@@ -42,7 +40,7 @@ public sealed class SelectionFence
             return States.PressedButNotMoved;
         }
 
-        var globalMousePos = globalMouse.PositionVec;
+        var globalMousePos = io.MousePos;
         var interactionMin = Vector2.Max(_startPositionInScreen, globalMousePos);
         var interactionMax = Vector2.Min(_startPositionInScreen, globalMousePos);
             
