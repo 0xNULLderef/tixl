@@ -164,6 +164,11 @@ internal sealed class AppWindow
                     io.KeyAlt = (e.key.keysym.mod & SDL.SDL_Keymod.KMOD_ALT) != 0;
                     io.KeysDown[(int)e.key.keysym.scancode] = false;
                     break;
+                case SDL.SDL_EventType.SDL_WINDOWEVENT:
+                    if(e.window.windowEvent == SDL.SDL_WindowEventID.SDL_WINDOWEVENT_RESIZED) { 
+                        RebuildBackBuffer(SDLWindow, _device, ref _renderTargetView, ref _backBufferTexture, ref _swapChain);
+                    }
+                    break;
                 }
             }
 
@@ -212,7 +217,7 @@ internal sealed class AppWindow
 
     private void CreateWindow(string windowTitle, bool disableClose)
     {
-        SDLWindow = SDL.SDL_CreateWindow(windowTitle, SDL.SDL_WINDOWPOS_UNDEFINED, SDL.SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL.SDL_WindowFlags.SDL_WINDOW_VULKAN);
+        SDLWindow = SDL.SDL_CreateWindow(windowTitle, SDL.SDL_WINDOWPOS_UNDEFINED, SDL.SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL.SDL_WindowFlags.SDL_WINDOW_VULKAN | SDL.SDL_WindowFlags.SDL_WINDOW_RESIZABLE);
         // TODO: SDL.SDL_AddEventWatch();
     }
 

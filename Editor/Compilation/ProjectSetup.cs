@@ -74,7 +74,8 @@ internal static partial class ProjectSetup
     private static bool TryLoadProject(ProjectWithReleaseInfo release, bool forceRecompile, out PackageWithReleaseInfo? operatorPackage)
     {
         var csProj = release.CsProject!;
-        csProj.RemoveOldBuilds(Compiler.BuildMode.Debug);
+        // TODO: make this optional?
+        // csProj.RemoveOldBuilds(Compiler.BuildMode.Debug);
 
         var releaseInfo = release.ReleaseInfo;
         forceRecompile = forceRecompile 
