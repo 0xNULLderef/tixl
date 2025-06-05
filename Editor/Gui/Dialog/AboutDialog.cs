@@ -17,16 +17,66 @@ namespace T3.Editor.Gui.Dialog;
 
 internal sealed class AboutDialog : ModalDialog
 {
+    private static Vector2 Pupil(Vector2 eyeCenter, Vector2 cursor, float eyeRad, ref float pRad, bool left)
+    {
+        float dx = cursor.X - eyeCenter.X;
+        float dy = cursor.Y - eyeCenter.Y;
+        float distance = (float)Math.Sqrt(dx * dx + dy * dy);
+        float maxMove = eyeRad - pRad;
+
+        float minRad = 0.7f;
+
+        var frameTime = ImGui.GetTime() * 3;
+        frameTime += left ? 42 : 0;
+        frameTime += Math.Sin(frameTime);
+        float fact = (float)Math.Abs(Math.Sin(frameTime) + Math.Cos(frameTime * 0.2));
+        fact = Math.Max(minRad, fact);
+        fact = Math.Min(1, fact);
+        pRad *= fact;
+
+        if (distance > maxMove)
+        {
+            dx = dx * maxMove / distance;
+            dy = dy * maxMove / distance;
+        }
+        return new Vector2(eyeCenter.X + dx, eyeCenter.Y + dy);
+    }
+
+
+    private static void DrawEye(ImDrawListPtr dl, Vector2 eyeCenter, Vector2 cpos, bool left)
+    {
+        float eyeRadius = 15;
+        float pupilRadius = 8;
+        dl.AddCircleFilled(eyeCenter, eyeRadius, 0xFFFFFFFF);
+        Vector2 pupilPos = Pupil(eyeCenter, cpos, eyeRadius, ref pupilRadius, left);
+        dl.AddCircleFilled(pupilPos, pupilRadius, 0xFF000000);
+    }
+
+    private void DrawEyes()
+    {
+        var dl = ImGui.GetWindowDrawList();
+        var x = 120;
+        var y = 80;
+        var left = new Vector2(x, y);
+        var right = new Vector2(x + 40, y);
+        Vector2 cursor = ImGui.GetMousePos();
+        Vector2 wp = ImGui.GetWindowPos();
+
+        DrawEye(dl, left + wp, cursor, true);
+        DrawEye(dl, right + wp, cursor, false);
+    }
+
     internal void Draw()
     {
         DialogSize = new Vector2(550, 550);
 
-        if (BeginDialog("    TiXL Loves You! <3"))
+        if (BeginDialog("    TiXL Loves You! Especially when you are NAUGHTY"))
         {
+            DrawEyes();
             var mousepos = ImGui.GetMousePos(); // Get the current mouse position
             var normalizedMouseX = Math.Clamp(mousepos.X / ImGui.GetIO().DisplaySize.X, .33f, 1f);
             var normalizedMouseY = Math.Clamp(mousepos.Y / ImGui.GetIO().DisplaySize.Y, .33f, 1f);// Normalize X to range [.33, 1]
-            var rectColor = new Vector4(normalizedMouseX -0.1f, normalizedMouseY -.127f, 0.620f,10+ 1f); // Use normalizedMouseX for r normalizedMouseY for the g channel
+            var rectColor = new Vector4(normalizedMouseX -0.1f, normalizedMouseY -.127f, 0.620f,10-  (1f)); // Use normalizedMouseX for r normalizedMouseY for the g channel
             var rectSize = new Vector2(64f,64f);
     
                 ImGui.GetWindowDrawList().AddRectFilled(
@@ -45,7 +95,7 @@ internal sealed class AboutDialog : ModalDialog
             ImGui.PopStyleColor();
             ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, mySpacing);
            
-            ImGui.TextColored(UiColors.TextMuted, $"Build Hash:"); // write git commit hash
+            ImGui.TextColored(UiColors.TextMuted, $"Build Hash: NAUGHTY VERSION"); // write git commit hash
             ImGui.SameLine();
             ImGui.Text($"{gitCommitHash}");
             

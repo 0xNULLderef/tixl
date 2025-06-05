@@ -61,7 +61,7 @@ public static class SharedResources
                                                                                     }); 
             
         _viewWindowDefaultTexture = ResourceManager.CreateTextureResource(@"images/editor/t3-background.png", null);
-        _t3logoAlphaTexture = ResourceManager.CreateTextureResource(@"images/t3-logo-alpha.png", null); //add t3logo to resources for use in about dialog
+        _t3logoAlphaTexture = ResourceManager.CreateTextureResource(@"images/tixl64.png", null); //add t3logo to resources for use in about dialog
         _colorPickerTexture = ResourceManager.CreateTextureResource(@"images/editor/t3-colorpicker.png", null);
         
         if (_viewWindowDefaultTexture.Value == null)
