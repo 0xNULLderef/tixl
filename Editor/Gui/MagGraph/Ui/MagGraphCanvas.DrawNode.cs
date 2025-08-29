@@ -62,17 +62,17 @@ internal sealed partial class MagGraphCanvas
         var pMaxVisible = pMax;
 
         
-        var sQuareOrRound = 0f;
+        var squareOrRound = 0f;
         var round = !UserSettings.Config.OpSquare;
         if (round)
         {
             // Round corners
-            sQuareOrRound = CanvasScale < 0.5 ? 0 : 5 * CanvasScale;
+            squareOrRound = CanvasScale < 0.5 ? 0 : 5 * CanvasScale;
         }
         else
         {
             // Square corners
-            sQuareOrRound = 0f;
+            squareOrRound = 0f;
         }
 
         // Adjust size when snapped
@@ -129,14 +129,14 @@ internal sealed partial class MagGraphCanvas
 
         // Background and Outline
         var borders = (int)snappedBorders % 16;
-        var imDrawFlags = _borderRoundings[borders];
+        var imDrawFlags = squareOrRound == 0.0f ? ImDrawFlags.RoundCornersNone : _borderRoundings[borders];
 
         drawList.AddRectFilled(pMinVisible,
                                pMaxVisible,
                                Color.Mix(
                                          ColorVariations.OperatorBackground.Apply(typeColor),
                                          ColorVariations.OperatorBackgroundIdle.Apply(typeColor),
-                                         idleFactor), sQuareOrRound,
+                                         idleFactor), squareOrRound,
                                imDrawFlags);
 
         // Snapped borders
@@ -158,7 +158,7 @@ internal sealed partial class MagGraphCanvas
         if (isSelected)
         {
             drawList.AddRect(pMinVisible, pMaxVisible, UiColors.ForegroundFull.Fade(_context.GraphOpacity),
-                             sQuareOrRound,
+                             squareOrRound,
                              imDrawFlags);
         }
         
@@ -167,7 +167,7 @@ internal sealed partial class MagGraphCanvas
         if (isHighlighted)
         {
             drawList.AddRect(pMinVisible, pMaxVisible, UiColors.ForegroundFull.Fade(Blink),
-                             sQuareOrRound,
+                             squareOrRound,
                              imDrawFlags);
         }
 
@@ -333,7 +333,7 @@ internal sealed partial class MagGraphCanvas
                     }
 
                     // Draw selection outline...
-                    drawList.AddRect(pMinVisible, pMaxVisible, UiColors.ForegroundFull.Fade(_hoverPickingProgress * 0.4f), sQuareOrRound, imDrawFlags);
+                    drawList.AddRect(pMinVisible, pMaxVisible, UiColors.ForegroundFull.Fade(_hoverPickingProgress * 0.4f), squareOrRound, imDrawFlags);
 
                     ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(8, 8));
                     ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 3);
