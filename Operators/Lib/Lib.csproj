@@ -11,7 +11,7 @@
     <Platforms>AnyCPU</Platforms>
     <VersionPrefix>1.666.999</VersionPrefix>
     <HomeGuid>00000000-0000-0000-0000-000000000000</HomeGuid>
-    <EditorVersion>$(TixlVersion)</EditorVersion>
+    <EditorVersion>4.0.2</EditorVersion>
     <IsEditorOnly>false</IsEditorOnly>
     <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
     <Deterministic>true</Deterministic>

@@ -68,7 +68,7 @@ internal static class ProgramWindows
 
     internal static void InitializeMainWindow(string version, out Device device)
     {
-        Main = new AppWindow("TiXL " + version, disableClose: false);
+        Main = new AppWindow("Naughty TiXL"+ version + "2222xy", disableClose: false);
         device = null;
         string[] highPerformanceKeywords = ["dedicated", "high performance", "rtx", "gtx"];
         string[] integratedKeywords = ["integrated", "intel(r) uhd graphics", "microsoft basic render", "microsoft basic render"]; // twice to make MS worse

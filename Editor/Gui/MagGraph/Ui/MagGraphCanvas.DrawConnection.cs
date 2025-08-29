@@ -1,4 +1,4 @@
-﻿using ImGuiNET;
+using ImGuiNET;
 using T3.Core.Utils;
 using T3.Editor.Gui.MagGraph.Interaction;
 using T3.Editor.Gui.MagGraph.Model;
@@ -179,13 +179,14 @@ internal sealed partial class MagGraphCanvas
                 case MagGraphConnection.ConnectionStyles.RightToLeft:
 
                 {
+                    // TODO: Implement this also for vertical connections.
                     if (GraphConnectionDrawer.DrawConnection(CanvasScale,
                                                              TransformRect(connection.SourceItem.Area),
                                                              sourcePosOnScreen,
                                                              TransformRect(connection.TargetItem.VerticalStackArea),
                                                              targetPosOnScreen,
                                                              typeColor,
-                                                             MathUtils.Lerp(0.25f, 2f, idleFadeProgress) + (isSelected | wasHoveredLastFrame ? 2 : 0),
+                                                             MathUtils.Lerp(0.25f, 1f, idleFadeProgress) +2,
                                                              out var hoverPositionOnLine,
                                                              out var normalizedHoverPos))
                     {

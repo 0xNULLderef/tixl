@@ -83,10 +83,13 @@ public sealed class UserSettings : Settings<UserSettings.ConfigData>
         // Mag Graph
         public bool DisconnectOnUnsnap = true;
         public float MaxCurveRadius = 350;
-        public int MaxSegmentCount = 32;
+        public int MaxSegmentCount = 1;
         public bool EnableHorizontalSnapping = true;
         
         public bool AddSpacesToParameterNames = true;
+
+        public bool OpSquare = false;
+        public float Linethick = 100f;
 
         public float ClickThreshold = 5; // Increase for high-res display and pen tablets
         public bool AdjustCameraSpeedWithMouseWheel = false;

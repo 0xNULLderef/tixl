@@ -90,8 +90,11 @@ internal sealed class SettingsWindow : Window
                                                           """
                                                          );
                     
+                    changed |= FormInputs.AddCheckBox("Enable keyboard shortcut",
+                                                      ref UserSettings.Config.EnableKeyboardShortCuts,
+                                                      "This option might prevent unintended user interactions while live performing with [KeyInput] operators.",
+                                                      UserSettings.Defaults.EnableKeyboardShortCuts);
 
-                    
                     if (UserSettings.Config.GraphStyle == UserSettings.GraphStyles.Magnetic)
                     {
                         // changed |= FormInputs.AddCheckBox("Disconnect on unsnap",
@@ -118,9 +121,13 @@ internal sealed class SettingsWindow : Window
                         changed |= FormInputs.AddInt("Connection segments",
                                                        ref UserSettings.Config.MaxSegmentCount, 1, 100, 1f,
                                                        "Controls the number of segments used to draw connections between operators.", UserSettings.Defaults.MaxSegmentCount);
-                        
 
+                        changed |= FormInputs.AddCheckBox("Make Ops Square",
+                                                          ref UserSettings.Config.OpSquare,
+                                                          "Makes Ops Square Edged like god intended.",
+                                                          UserSettings.Defaults.OpSquare);
                     }
+
                     else
                     {
                         changed |= FormInputs.AddCheckBox("Use arc connections",
@@ -140,6 +147,12 @@ internal sealed class SettingsWindow : Window
                         changed |= FormInputs.AddCheckBox("Show nodes thumbnails when hovering",
                                                           ref UserSettings.Config.EditorHoverPreview, null,
                                                           UserSettings.Defaults.EditorHoverPreview);
+
+                        changed |= FormInputs.AddFloat("Connection Line Thick",
+                                                   ref UserSettings.Config.ScrollSmoothing,
+                                                   0.0f, 0.2f, 0.01f, true,
+                                                   null,
+                                                   UserSettings.Defaults.ScrollSmoothing);
                     }
 
                     FormInputs.AddVerticalSpace();

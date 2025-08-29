@@ -61,6 +61,20 @@ internal sealed partial class MagGraphCanvas
         var pMinVisible = pMin;
         var pMaxVisible = pMax;
 
+        
+        var sQuareOrRound = 0f;
+        var round = !UserSettings.Config.OpSquare;
+        if (round)
+        {
+            // Round corners
+            sQuareOrRound = CanvasScale < 0.5 ? 0 : 5 * CanvasScale;
+        }
+        else
+        {
+            // Square corners
+            sQuareOrRound = 0f;
+        }
+
         // Adjust size when snapped
         var snappedBorders = Borders.None;
         {
@@ -122,7 +136,7 @@ internal sealed partial class MagGraphCanvas
                                Color.Mix(
                                          ColorVariations.OperatorBackground.Apply(typeColor),
                                          ColorVariations.OperatorBackgroundIdle.Apply(typeColor),
-                                         idleFactor), CanvasScale < 0.5f ? 0 : 5 * CanvasScale,
+                                         idleFactor), sQuareOrRound,
                                imDrawFlags);
 
         // Snapped borders
@@ -144,7 +158,7 @@ internal sealed partial class MagGraphCanvas
         if (isSelected)
         {
             drawList.AddRect(pMinVisible, pMaxVisible, UiColors.ForegroundFull.Fade(_context.GraphOpacity),
-                             CanvasScale < 0.5 ? 0 : 5 * CanvasScale,
+                             sQuareOrRound,
                              imDrawFlags);
         }
         
@@ -153,7 +167,7 @@ internal sealed partial class MagGraphCanvas
         if (isHighlighted)
         {
             drawList.AddRect(pMinVisible, pMaxVisible, UiColors.ForegroundFull.Fade(Blink),
-                             CanvasScale < 0.5 ? 0 : 5 * CanvasScale,
+                             sQuareOrRound,
                              imDrawFlags);
         }
 
@@ -319,7 +333,7 @@ internal sealed partial class MagGraphCanvas
                     }
 
                     // Draw selection outline...
-                    drawList.AddRect(pMinVisible, pMaxVisible, UiColors.ForegroundFull.Fade(_hoverPickingProgress * 0.4f), CanvasScale < 0.5 ? 0 : 5 * CanvasScale, imDrawFlags);
+                    drawList.AddRect(pMinVisible, pMaxVisible, UiColors.ForegroundFull.Fade(_hoverPickingProgress * 0.4f), sQuareOrRound, imDrawFlags);
 
                     ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(8, 8));
                     ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 3);
